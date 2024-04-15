@@ -27,7 +27,7 @@ if(location.endsWith(".json") && existsSync(location)) {
         if(file.endsWith(".json")) {
             const data  = require(location + "/" + file);
 
-            if(!data.MSG || !data.MSG.title) {
+            if(!data || !data.title) {
                 throw new Error(`Data format in ${file} in improper`)
             }
 
@@ -57,7 +57,7 @@ if(location.endsWith(".json") && existsSync(location)) {
     for(const id in files){
         const game = files[id];
 
-        const slug = game.MSG.title.toLowerCase()
+        const slug = game.title.toLowerCase()
             .normalize("NFD").replace(/\p{Diacritic}/gu, "")
             .replaceAll(" ", "-")
             .replaceAll("&", "and")
@@ -66,7 +66,7 @@ if(location.endsWith(".json") && existsSync(location)) {
             .replaceAll(/-+/g, "-")
             .replaceAll(/^-|-$/g, "");
 
-        if(existsSync(__dirname + "/output/" + game.MSG.slug + ".json") || existsSync(__dirname + "/output/FAILED_" + game.MSG.slug + ".json")){
+        if(existsSync(__dirname + "/output/" + game.slug + ".json") || existsSync(__dirname + "/output/FAILED_" + game.slug + ".json")){
             continue
         }
 
@@ -82,11 +82,11 @@ if(location.endsWith(".json") && existsSync(location)) {
         const json = await response.json();
 
         if(json[0] && json[0].id) {
-            console.log(green(`[${id}/${files.length}] Located data for ${game.MSG.title} ( ${slug} )`))
-            writeFileSync(__dirname + "/output/" + game.MSG.slug + ".json", JSON.stringify(json[0]));
+            console.log(green(`[${id}/${files.length}] Located data for ${game.title} ( ${slug} )`))
+            writeFileSync(__dirname + "/output/" + game.slug + ".json", JSON.stringify(json[0]));
         }else {
-            console.log(red(`[${id}/${files.length}] Failed to locate data for ${game.MSG.title} ( ${slug} )`))
-            writeFileSync(__dirname + "/output/FAILED_" + game.MSG.slug + ".json", JSON.stringify(json));
+            console.log(red(`[${id}/${files.length}] Failed to locate data for ${game.title} ( ${slug} )`))
+            writeFileSync(__dirname + "/output/FAILED_" + game.slug + ".json", JSON.stringify(json));
         }
 
         await setTimeout(.4 * 1000)
